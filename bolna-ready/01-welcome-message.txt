@@ -1,0 +1,1 @@
+Namaste, kya main {{customer_name}} se baat kar rahi hoon?

@@ -1,0 +1,117 @@
+[
+  {
+    "name": "get_loan_details",
+    "description": "Fetch the current outstanding amount, due date and days overdue for a loan. Call this at the start of the call if any loan variable is missing. Never state an amount that did not come from this tool.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string", "description": "Loan account number" }
+      },
+      "required": ["loan_id"]
+    }
+  },
+  {
+    "name": "record_payment_promise",
+    "description": "Record a promise to pay. Only call after the customer has stated a date, and only after you have read the promise back and they confirmed it.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "promise_date": {
+          "type": "string",
+          "description": "ISO date YYYY-MM-DD. Null if the customer would not commit to a specific date."
+        },
+        "promise_amount": {
+          "type": "number",
+          "description": "Amount in rupees the customer committed to. Null if not stated. Never estimate."
+        },
+        "partial": { "type": "boolean", "description": "True if less than the full overdue amount" },
+        "notes": { "type": "string", "description": "Customer's own words, verbatim, if the promise was vague" }
+      },
+      "required": ["loan_id", "promise_date"]
+    }
+  },
+  {
+    "name": "mark_dispute",
+    "description": "Flag that the customer contests something. Ends the collections attempt — do not keep pressing after calling this.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["claims_paid", "amount", "not_my_loan", "fraud", "other"]
+        },
+        "customer_statement": { "type": "string", "description": "What they actually said, verbatim" }
+      },
+      "required": ["loan_id", "type"]
+    }
+  },
+  {
+    "name": "mark_do_not_call",
+    "description": "Customer asked not to be contacted. Call immediately on request, before any persuasion attempt. Legally required.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "phone": { "type": "string" },
+        "scope": { "type": "string", "enum": ["this_number", "all_channels"] }
+      },
+      "required": ["loan_id", "phone"]
+    }
+  },
+  {
+    "name": "mark_wrong_number",
+    "description": "The person reached is not the borrower and does not know them.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "phone": { "type": "string" }
+      },
+      "required": ["loan_id", "phone"]
+    }
+  },
+  {
+    "name": "schedule_callback",
+    "description": "Customer cannot talk now. Only offer slots between 08:00 and 19:00 IST — RBI restricts recovery calls outside those hours.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "callback_at": { "type": "string", "description": "ISO datetime, IST, must be between 08:00 and 19:00" }
+      },
+      "required": ["loan_id", "callback_at"]
+    }
+  },
+  {
+    "name": "transfer_to_human",
+    "description": "Hand off to a human agent. Use for settlement or restructuring requests, disputes the customer wants resolved live, language mismatch, or any direct request for a human.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "loan_id": { "type": "string" },
+        "reason": {
+          "type": "string",
+          "enum": ["settlement_request", "dispute", "language_mismatch", "customer_requested", "out_of_scope", "escalation"]
+        },
+        "context": { "type": "string", "description": "One-line summary so the human does not restart the conversation" }
+      },
+      "required": ["loan_id", "reason"]
+    }
+  },
+  {
+    "name": "end_call",
+    "description": "End the call cleanly.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "reason": {
+          "type": "string",
+          "enum": ["promise_recorded", "callback_scheduled", "dispute_raised", "do_not_call", "wrong_number", "no_response", "abusive", "completed"]
+        }
+      },
+      "required": ["reason"]
+    }
+  }
+]

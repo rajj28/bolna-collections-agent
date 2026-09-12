@@ -1,0 +1,30 @@
+{
+  "name": "mark_do_not_call",
+  "description": "The customer asked not to be contacted again, in any words, in any language. Call this immediately on request, before any further question or persuasion attempt. This is a legal requirement, not a preference.",
+  "pre_call_message": "Ji bilkul, main note kar rahi hoon.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "loan_id": {
+        "type": "string",
+        "description": "Loan account number"
+      },
+      "customer_statement": {
+        "type": "string",
+        "description": "What the customer actually said, verbatim"
+      }
+    },
+    "required": ["loan_id"]
+  },
+  "key": "custom_task",
+  "value": {
+    "method": "POST",
+    "url": "https://webhook.site/YOUR-ID",
+    "param": {
+      "event": "do_not_call",
+      "loan_id": "%(loan_id)s",
+      "customer_statement": "%(customer_statement)s"
+    },
+    "headers": {}
+  }
+}

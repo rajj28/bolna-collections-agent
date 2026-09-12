@@ -1,0 +1,40 @@
+{
+  "name": "record_payment_promise",
+  "description": "Record a promise to pay. Only call after the customer has stated a date and you have read it back and they confirmed it. If they never gave a specific date, still call this with promise_date left empty and their exact words in notes. Never invent a date to make the call look successful.",
+  "pre_call_message": "Ek second, main ye note kar leti hoon.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "loan_id": {
+        "type": "string",
+        "description": "Loan account number"
+      },
+      "promise_date": {
+        "type": "string",
+        "description": "The date the customer committed to, in YYYY-MM-DD format. Leave empty if they would not commit to a specific date."
+      },
+      "promise_amount": {
+        "type": "string",
+        "description": "The rupee amount they committed to, as digits. Leave empty if not stated. Never estimate."
+      },
+      "notes": {
+        "type": "string",
+        "description": "The customer's own words, verbatim, if the promise was vague"
+      }
+    },
+    "required": ["loan_id"]
+  },
+  "key": "custom_task",
+  "value": {
+    "method": "POST",
+    "url": "https://webhook.site/YOUR-ID",
+    "param": {
+      "event": "payment_promise",
+      "loan_id": "%(loan_id)s",
+      "promise_date": "%(promise_date)s",
+      "promise_amount": "%(promise_amount)s",
+      "notes": "%(notes)s"
+    },
+    "headers": {}
+  }
+}

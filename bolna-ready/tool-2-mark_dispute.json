@@ -1,0 +1,35 @@
+{
+  "name": "mark_dispute",
+  "description": "The customer contests something: says they already paid, disputes the amount, or says the loan is not theirs. Call this instead of arguing or defending the figures. After calling it, stop pressing for payment.",
+  "pre_call_message": "Ji, main check karwa deti hoon.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "loan_id": {
+        "type": "string",
+        "description": "Loan account number"
+      },
+      "type": {
+        "type": "string",
+        "description": "The kind of dispute: claims_paid, amount, not_my_loan, fraud, or other"
+      },
+      "customer_statement": {
+        "type": "string",
+        "description": "What the customer actually said, verbatim"
+      }
+    },
+    "required": ["loan_id", "type"]
+  },
+  "key": "custom_task",
+  "value": {
+    "method": "POST",
+    "url": "https://webhook.site/YOUR-ID",
+    "param": {
+      "event": "dispute",
+      "loan_id": "%(loan_id)s",
+      "type": "%(type)s",
+      "customer_statement": "%(customer_statement)s"
+    },
+    "headers": {}
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "transfer_to_human",
+  "description": "Hand off to a human agent. Use for settlement or restructuring requests, a dispute the customer wants resolved on this call, a language you cannot hold a conversation in, or any direct request for a human. Never attempt to retain the customer first.",
+  "pre_call_message": "Main aapko hamare team member se connect karti hoon.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "loan_id": {
+        "type": "string",
+        "description": "Loan account number"
+      },
+      "reason": {
+        "type": "string",
+        "description": "Why the transfer is needed: settlement_request, dispute, language_mismatch, customer_requested, or out_of_scope"
+      },
+      "context": {
+        "type": "string",
+        "description": "One line of context so the human does not have to restart the conversation"
+      }
+    },
+    "required": ["loan_id", "reason"]
+  },
+  "key": "custom_task",
+  "value": {
+    "method": "POST",
+    "url": "https://webhook.site/YOUR-ID",
+    "param": {
+      "event": "transfer",
+      "loan_id": "%(loan_id)s",
+      "reason": "%(reason)s",
+      "context": "%(context)s"
+    },
+    "headers": {}
+  }
+}
